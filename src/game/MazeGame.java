@@ -1,5 +1,7 @@
 package game;
 
+import static input.Input.nextInt;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,6 +11,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import auth.User;
+import exceptions.InvalidInputException;
 
 public class MazeGame extends Game
 {
@@ -20,10 +23,41 @@ public class MazeGame extends Game
 	}
 	
 	@Override
-	protected void start(Scanner sc)
+	public void start(Scanner sc)
 	{
 		System.out.println("***************__ WELCOME " + user.getUsername() + " TO MAZE GAME!! __********************");
-		Maze maze = new Maze(20, 20);
+		int diff = 0;
+		while (true)
+		{
+			System.out.println("\nChoose a difficulty");
+			System.out.println("1 - Easy (10x10 maze");
+			System.out.println("2 - Medium (20x20 maze)");
+			System.out.println("3 - Hard (30x30 maze)");
+			try
+			{
+				diff = nextInt(1, 3, sc);
+			}
+			catch (InvalidInputException e)
+			{
+				System.out.println(e.getMessage());
+				continue;
+			}
+			break;
+		}
+		
+		Maze maze = null;
+		switch (diff)
+		{
+			case 1:
+				maze = new Maze(10, 10);
+				break;
+			case 2:
+				maze = new Maze(20, 20);
+				break;
+			case 3:
+				maze = new Maze(30, 30);
+				break;
+		}
 		while (true)
 		{
 			try
@@ -34,7 +68,7 @@ public class MazeGame extends Game
 			{
 				e.printStackTrace();
 			}
-			char c = sc.next().toLowerCase().charAt(0);
+			char c = sc.nextLine().toLowerCase().charAt(0);
 			switch (c)
 			{
 				case 'w':
@@ -57,7 +91,6 @@ public class MazeGame extends Game
 				{
 					maze.display();
 					System.out.println("\nCONGRATULATIONS! YOU WON!");
-					maze.stop();
 				}
 				catch (IOException e)
 				{
@@ -358,11 +391,6 @@ class Maze
 		if (x >= 0 && x < width && y >= 0 && y < height)
 			return tiles[x][y];
 		return UNDEFINED;
-	}
-	
-	public void stop() throws IOException
-	{
-		bw.close();
 	}
 	
 	enum Direction

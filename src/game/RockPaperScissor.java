@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import auth.User;
 
+import static input.Input.*;
+
 public class RockPaperScissor extends Game
 {
 	private static final String[] ROCK_STR = {"------------", "|  |  |  |  |\\", "|  |  |  |  |_|", "|  |  |  |  |_|", "\\_/\\_/\\_/\\_/"};
@@ -27,7 +29,7 @@ public class RockPaperScissor extends Game
 		while (true)
 		{
 			System.out.println("\n\nEnter your move\n1-Rock\n2-Paper\n3-Scissor\n4-Quit");
-			int move = sc.nextInt();
+			int move = nextInt(sc);
 			if (move == 4)
 				break;
 			else if (move <= 0 || move > 4)

@@ -2,6 +2,8 @@ package auth;
 
 import java.util.Scanner;
 
+import static input.Input.*;
+
 public class User
 {
 	private String username;
@@ -15,9 +17,9 @@ public class User
 	public void login(Scanner sc)
 	{
 		System.out.print("Enter username : ");
-		String username = sc.next();
+		String username = nextLine(sc);
 		System.out.print("Enter your password : ");
-		String pass = sc.next();
+		String pass = nextLine(sc);
 		
 		Authenticator auth = new Authenticator();
 		
@@ -38,7 +40,7 @@ public class User
 		while (true)
 		{
 			System.out.print("\nEnter a username : ");
-			username = sc.next();
+			username = nextLine(sc);
 			if (username.equals("q"))
 				return;
 			if (auth.exists(username))
@@ -48,7 +50,7 @@ public class User
 		}
 		
 		System.out.print("Enter a password : ");
-		String pass = sc.next();
+		String pass = nextLine(sc);
 		auth.register(username, pass);
 	}
 	

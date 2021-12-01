@@ -55,6 +55,6 @@ public abstract class Game {
 		}
 
 	}
-
-	protected abstract void start(Scanner sc);
+	
+	public abstract void start(Scanner sc);
 }

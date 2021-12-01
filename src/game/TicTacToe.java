@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 import auth.User;
 
-public class XandO extends Game
+public class TicTacToe extends Game
 {
-	public XandO(User user)
+	public TicTacToe(User user)
 	{
 		super("x_and_o", user);
 	}
@@ -15,7 +15,7 @@ public class XandO extends Game
 	static boolean continueGame;
 	
 	@Override
-	protected void start(Scanner sc)
+	public void start(Scanner sc)
 	{
 		System.out.println("***************__ WELCOME " + user.getUsername() + " TO X AND O!! __********************");
 		int grid[][] = new int[3][3];
