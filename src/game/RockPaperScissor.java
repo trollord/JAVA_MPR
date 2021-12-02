@@ -1,10 +1,11 @@
 package game;
 
+import static input.Input.nextInt;
+
 import java.util.Scanner;
 
 import auth.User;
-
-import static input.Input.*;
+import exceptions.InvalidInputException;
 
 public class RockPaperScissor extends Game
 {
@@ -28,36 +29,42 @@ public class RockPaperScissor extends Game
 		int user_points = 0, opp_points = 0;
 		while (true)
 		{
-			System.out.println("\n\nEnter your move\n1-Rock\n2-Paper\n3-Scissor\n4-Quit");
-			int move = nextInt(sc);
-			if (move == 4)
+			System.out.println("\n\nEnter your move\n1-Rock\n2-Paper\n3-Scissor\n4-Return to main menu");
+			int move = -1;
+			try
+			{
+				move = nextInt(1, 4, sc);
+			}
+			catch (InvalidInputException e)
+			{
+				System.out.println(e.getMessage());
+				continue;
+			}
+			
+			if(move == 4)
 				break;
-			else if (move <= 0 || move > 4)
-				System.out.println("\nInvalid move!\n");
+			
+			move -= 1; //0 index user's move
+			
+			int rand = (int) (Math.random() * 3);
+			
+			draw(move, rand);
+			
+			if (move == rand)
+			{
+				System.out.println("It's a tie!!");
+				user_points++;
+				opp_points++;
+			}
+			if (move == ROCK && rand == SCISSOR || move == SCISSOR && rand == PAPER || move == PAPER && rand == ROCK)
+			{
+				System.out.println("You won!! wohoo");
+				user_points++;
+			}
 			else
 			{
-				move -= 1; //0 index user's move
-				
-				int rand = (int) (Math.random() * 3);
-				
-				draw(move, rand);
-				
-				if (move == rand)
-				{
-					System.out.println("It's a tie!!");
-					user_points++;
-					opp_points++;
-				}
-				if (move == ROCK && rand == SCISSOR || move == SCISSOR && rand == PAPER || move == PAPER && rand == ROCK)
-				{
-					System.out.println("You won!! wohoo");
-					user_points++;
-				}
-				else
-				{
-					System.out.println("You lost! Better luck next time!");
-					opp_points++;
-				}
+				System.out.println("You lost! Better luck next time!");
+				opp_points++;
 			}
 		}
 		

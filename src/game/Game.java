@@ -1,17 +1,17 @@
 package game;
 
-import java.util.Scanner;
-import auth.User;
-import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+import auth.SQLDetails;
+import auth.User;
 
 //maze_game  rock_paper_scissor  x_and_o
 public abstract class Game {
-
-	String url = "jdbc:mysql://localhost:3306/";
-	String db_user = "root";
-	String passwd = "Mandar@165";
 	protected final String GAME_NAME;
 	protected User user;
 
@@ -23,7 +23,7 @@ public abstract class Game {
 	protected void registerScore(int value) {
 
 		try {
-			Connection con = DriverManager.getConnection(url + GAME_NAME, db_user, passwd);
+			Connection con = DriverManager.getConnection(SQLDetails.url + GAME_NAME, SQLDetails.db_user, SQLDetails.passwd);
 			String s1 = "insert into data(p_name,p_score) values(?,?)";
 			PreparedStatement pstmt = con.prepareStatement(s1);
 			pstmt.setString(1, user.getUsername());
@@ -41,7 +41,7 @@ public abstract class Game {
 		System.out.println("NAME\t--" + "POINTS\t");
 		System.out.printf("_____________________________________\n");
 		try {
-			Connection con = DriverManager.getConnection(url + GAME_NAME, db_user, passwd);
+			Connection con = DriverManager.getConnection(SQLDetails.url + GAME_NAME, SQLDetails.db_user, SQLDetails.passwd);
 			String query = "SELECT * FROM data ORDER BY p_score DESC LIMIT 5";
 			Statement stmt = con.createStatement();
 			ResultSet rs2 = stmt.executeQuery(query);

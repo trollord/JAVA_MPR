@@ -1,8 +1,9 @@
 package auth;
 
-import java.util.Scanner;
+import static input.Input.nextLine;
 
-import static input.Input.*;
+import java.util.Random;
+import java.util.Scanner;
 
 public class User
 {
@@ -56,7 +57,8 @@ public class User
 	
 	public void setUpGuest()
 	{
-		username = "Guest";
+		Random rand = new Random();
+		username = "Guest_"+Math.abs(rand.nextInt());
 		logged = true;
 	}
 	

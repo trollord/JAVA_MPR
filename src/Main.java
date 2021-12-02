@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 import auth.User;
 import exceptions.InvalidInputException;
+import game.HangMan;
+import game.Leaderboard;
 import game.MazeGame;
 import game.RockPaperScissor;
 import game.TicTacToe;
@@ -13,7 +15,7 @@ public class Main
 {
 	public static void init(Scanner sc, User user)
 	{
-		final int exitCode = 5;
+		final int exitCode = 6;
 		
 		int ch;
 		do
@@ -26,6 +28,7 @@ public class Main
 				System.out.println("2 - X and O");
 				System.out.println("3 - Maze Game");
 				System.out.println("4 - Hang man");
+				System.out.println("5 - Leaderboards");
 				System.out.println(exitCode + " - Quit");
 				
 				try
@@ -52,20 +55,27 @@ public class Main
 				case 3:
 					MazeGame mg = new MazeGame(user);
 					mg.start(sc);
+					break;
+				case 4:
+					HangMan hm = new HangMan(user);
+					hm.start(sc);
+					break;
+				case 5:
+					Leaderboard lb = new Leaderboard(user);
+					lb.start(sc);
+					break;
 				case exitCode:
 					break;
-				
-				default:
-					System.out.println("\nPlease enter a valid input.\n");
 			}
 		}
 		while (ch != exitCode);
 	}
-
-	public static void main(String[] args) {
+	
+	public static void main(String[] args)
+	{
 		Scanner sc = new Scanner(System.in);
 		User user = new User();
-
+		
 		while (true)
 		{
 			int ch;
@@ -96,7 +106,7 @@ public class Main
 				case 2:
 					user.register(sc);
 					break;
-
+				
 				case 3:
 					user.setUpGuest();
 					break;
@@ -104,9 +114,9 @@ public class Main
 			if (user.isLogged())
 				break;
 		}
-
+		
 		init(sc, user);
-
+		
 		sc.close();
 	}
 }

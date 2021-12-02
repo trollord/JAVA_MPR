@@ -9,7 +9,7 @@ public class TicTacToe extends Game
 {
 	public TicTacToe(User user)
 	{
-		super("x_and_o", user);
+		super("tic_tac_toe", user);
 	}
 	
 	static boolean continueGame;

@@ -1,5 +1,6 @@
 package input;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import exceptions.InvalidInputException;
@@ -8,9 +9,16 @@ public class Input
 {
 	public int test;
 	
-	public static int nextInt(Scanner sc)
+	public static int nextInt(Scanner sc) throws InvalidInputException
 	{
-		return Integer.parseInt(sc.nextLine());
+		try
+		{
+			return Integer.parseInt(sc.nextLine());
+		}
+		catch (NumberFormatException e)
+		{
+			throw new InvalidInputException();
+		}
 	}
 	
 	//Returns integer if it is within range, otherwise throws error
@@ -22,14 +30,33 @@ public class Input
 		return n;
 	}
 	
-	public static float nextFloat(Scanner sc)
+	public static char nextChar(Scanner sc) throws InvalidInputException
 	{
-		return Float.parseFloat(sc.nextLine());
+		return sc.nextLine().charAt(0);
 	}
 	
-	public static double nextDouble(Scanner sc)
+	public static float nextFloat(Scanner sc) throws InvalidInputException
 	{
-		return Double.parseDouble(sc.nextLine());
+		try
+		{
+			return Float.parseFloat(sc.nextLine());
+		}
+		catch (NumberFormatException e)
+		{
+			throw new InvalidInputException();
+		}
+	}
+	
+	public static double nextDouble(Scanner sc) throws InvalidInputException
+	{
+		try
+		{
+			return Double.parseDouble(sc.nextLine());
+		}
+		catch (NumberFormatException e)
+		{
+			throw new InvalidInputException();
+		}
 	}
 	
 	public static String nextLine(Scanner sc)

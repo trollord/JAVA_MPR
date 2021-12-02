@@ -33,9 +33,10 @@ public class MazeGame extends Game
 			System.out.println("1 - Easy (10x10 maze");
 			System.out.println("2 - Medium (20x20 maze)");
 			System.out.println("3 - Hard (30x30 maze)");
+			System.out.println("4 - Return to main menu");
 			try
 			{
-				diff = nextInt(1, 3, sc);
+				diff = nextInt(1, 4, sc);
 			}
 			catch (InvalidInputException e)
 			{
@@ -57,7 +58,10 @@ public class MazeGame extends Game
 			case 3:
 				maze = new Maze(30, 30);
 				break;
+			case 4:
+				return;
 		}
+		startTime = System.currentTimeMillis();
 		while (true)
 		{
 			try
@@ -102,7 +106,7 @@ public class MazeGame extends Game
 		
 		long time = System.currentTimeMillis() - startTime;
 		int score = (int) (300_000 / time); //300s = 5m
-		System.out.println("\nYou finished the game in " + time + "s.");
+		System.out.println("\nYou finished the game in " + time/1000 + "s.");
 		System.out.println("You scored " + score + " points");
 		super.registerScore(score);
 	}
