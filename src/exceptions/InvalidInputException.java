@@ -2,9 +2,13 @@ package exceptions;
 
 public class InvalidInputException extends Exception
 {
-	@Override
-	public String getMessage()
+	public InvalidInputException()
 	{
-		return "\nPlease enter a valid input\n";
+		super("\nPlease enter a valid input\n");
+	}
+	
+	public InvalidInputException(String msg)
+	{
+		super(msg);
 	}
 }

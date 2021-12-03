@@ -1,18 +1,21 @@
 package auth;
 
-import java.util.*;
-import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import exceptions.InvalidUsernameException;
 
 public class Authenticator
 {
 	public boolean isValid(String u_name, String p_pass)
 	{
-		int c = 0;
 		try
 		{
-			Connection con = DriverManager.getConnection(SQLDetails.url+"user_information", SQLDetails.db_user, SQLDetails.passwd);
+			Connection con = DriverManager.getConnection(SQLDetails.url + "user_information", SQLDetails.db_user, SQLDetails.passwd);
 			
 			Statement stmt = con.createStatement();
 			String query = "Select u_name,p_pass from register";
@@ -23,32 +26,23 @@ public class Authenticator
 				String one = rs.getString("u_name");
 				String two = rs.getString("p_pass");
 				if (u_name.equals(one) && p_pass.equals(two))
-				{
-					c = 1;
-				}
+					return true;
 			}
 		}
-		catch (Exception e)
+		catch(SQLException e)
 		{
 			System.out.println(e.getMessage());
 		}
-		if (c == 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
-	public boolean exists(String u_name)
+	public void checkValidity(String u_name) throws InvalidUsernameException
 	{
-		int c = 0;
+		if (u_name == "q" || u_name == "guest" || u_name == "return")
+			throw new InvalidUsernameException("Please select another username. This username is reserved");
 		try
 		{
-			
-			Connection con = DriverManager.getConnection(SQLDetails.url+"user_information", SQLDetails.db_user, SQLDetails.passwd);
+			Connection con = DriverManager.getConnection(SQLDetails.url + "user_information", SQLDetails.db_user, SQLDetails.passwd);
 			
 			Statement stmt = con.createStatement();
 			String query = "Select u_name from register";
@@ -59,21 +53,13 @@ public class Authenticator
 				String one = rs.getString("u_name");
 				if (u_name.equals(one))
 				{
-					c = 1;
+					throw new InvalidUsernameException("Username already taken. Please select another username!");
 				}
 			}
 		}
-		catch (Exception e)
+		catch (SQLException e)
 		{
 			System.out.println(e.getMessage());
-		}
-		if (c == 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
 		}
 	}
 	
@@ -81,7 +67,7 @@ public class Authenticator
 	{
 		try
 		{
-			Connection con = DriverManager.getConnection(SQLDetails.url+"user_information", SQLDetails.db_user, SQLDetails.passwd);
+			Connection con = DriverManager.getConnection(SQLDetails.url + "user_information", SQLDetails.db_user, SQLDetails.passwd);
 			String s1 = "insert into register(u_name,p_pass) values(?,?)";
 			PreparedStatement pstmt = con.prepareStatement(s1);
 			// String query = "Select name,rollno from stud";

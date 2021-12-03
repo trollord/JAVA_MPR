@@ -5,6 +5,8 @@ import static input.Input.nextLine;
 import java.util.Random;
 import java.util.Scanner;
 
+import exceptions.InvalidUsernameException;
+
 public class User
 {
 	private String username;
@@ -21,13 +23,18 @@ public class User
 		String username = nextLine(sc);
 		System.out.print("Enter your password : ");
 		String pass = nextLine(sc);
-		
+		login(username, pass);
+	}
+	
+	public void login(String username, String pass)
+	{
 		Authenticator auth = new Authenticator();
 		
 		if (auth.isValid(username, pass))
 		{
 			this.username = username;
 			logged = true;
+			System.out.println("Successfully logged into " + username);
 		}
 		else
 			System.out.println("Invalid username/password");
@@ -44,22 +51,30 @@ public class User
 			username = nextLine(sc);
 			if (username.equals("q"))
 				return;
-			if (auth.exists(username))
-				System.out.println("Username already taken.\nPlease use another username.\nEnter q to return to main menu");
-			else
-				break;
+			try
+			{
+				auth.checkValidity(username);
+			}
+			catch(InvalidUsernameException e)
+			{
+				System.out.println(e.getMessage());
+				System.out.println("Enter q to return to main menu");
+				continue;
+			}
+			break;
 		}
-		
 		System.out.print("Enter a password : ");
 		String pass = nextLine(sc);
 		auth.register(username, pass);
+		System.out.println("Account successfully registered!");
 	}
 	
 	public void setUpGuest()
 	{
 		Random rand = new Random();
-		username = "Guest_"+Math.abs(rand.nextInt());
+		username = "Guest_" + Math.abs(rand.nextInt());
 		logged = true;
+		System.out.println("Guest account " + username + " successfully created!");
 	}
 	
 	public boolean isLogged()

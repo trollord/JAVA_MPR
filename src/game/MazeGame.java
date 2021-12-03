@@ -25,7 +25,7 @@ public class MazeGame extends Game
 	@Override
 	public void start(Scanner sc)
 	{
-		System.out.println("***************__ WELCOME " + user.getUsername() + " TO MAZE GAME!! __********************");
+		System.out.println("\n***************__ WELCOME " + user.getUsername() + " TO MAZE GAME!! __********************");
 		int diff = 0;
 		while (true)
 		{

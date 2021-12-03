@@ -1,9 +1,11 @@
 package game;
 
+import static input.Input.nextInt;
+
 import java.util.Scanner;
-// ADD AN USER DEFINED EXCEPTION !!!
 
 import auth.User;
+import exceptions.InvalidInputException;
 
 public class TicTacToe extends Game
 {
@@ -12,67 +14,119 @@ public class TicTacToe extends Game
 		super("tic_tac_toe", user);
 	}
 	
-	static boolean continueGame;
-	
 	@Override
 	public void start(Scanner sc)
 	{
-		System.out.println("***************__ WELCOME " + user.getUsername() + " TO X AND O!! __********************");
-		int grid[][] = new int[3][3];
-		int winCount = 0;
-		continueGame = true;
-		while (continueGame)
+		System.out.println("\n***************__ WELCOME " + user.getUsername() + " TO X AND O!! __********************");
+		User user2 = new User();
+		do
 		{
-			System.out.println("PLAYER ONE");
-			player(1, grid, sc);
-			if (continueGame)
+			System.out.println("This game can only be played by 2 players. Please find a friend to play this game with");
+			System.out.println("Enter 'guest' if you want to play as a guest. Enter 'return' to return to main menu");
+			System.out.print("Player 2, please enter your username : ");
+			String username = sc.nextLine();
+			if (username.equals("guest"))
 			{
-				System.out.println("PLAYER TWO");
-				player(-1, grid, sc);
+				user2.setUpGuest();
 			}
-			winCount++;
+			else if (username.equals("return"))
+			{
+				return;
+			}
+			else
+			{
+				System.out.print("Player 2, please enter your password : ");
+				String pass = sc.nextLine();
+				user2.login(username, pass);
+			}
+		}
+		while (!user2.isLogged());
+		int user1_points = 0, user2_points = 0;
+		int ch = -1;
+		while (true)
+		{
+			System.out.println("\nEnter your choice");
+			System.out.println("1 - Start new game");
+			System.out.println("2 - Return to main menu");
+			try
+			{
+				ch = nextInt(1, 2, sc);
+			}
+			catch (InvalidInputException e)
+			{
+				System.out.println(e.getMessage());
+				continue;
+			}
+			
+			if (ch == 2)
+				break;
+			
+			int grid[][] = new int[3][3];
+			int moveCount = 0;
+			int xPlays = 1;
+			while (true)
+			{
+				if (xPlays == 1)
+					System.out.println(user.getUsername() + ", YOUR TURN");
+				else
+					System.out.println(user2.getUsername() + ", YOUR TURN");
+				try
+				{
+					player(xPlays, grid, sc);
+					int winner = checkwin(grid);
+					if (winner == 1)
+					{
+						user1_points++;
+						System.out.println(user.getUsername() + " YOU WON!");
+						break;
+					}
+					else if (winner == -1)
+					{
+						user2_points++;
+						System.out.println(user2.getUsername() + " YOU WON!");
+						break;
+					}
+				}
+				catch (InvalidInputException e)
+				{
+					System.out.println(e.getMessage());
+					continue;
+				}
+				
+				xPlays *= -1;
+				moveCount++;
+				
+				if (moveCount == 9)
+				{
+					System.out.println("IT IS A TIE");
+					break;
+				}
+			}
 		}
 		
-		if (winCount == 9)
-		{
-			System.out.println("IT IS A TIE");
-		}
+		if (user1_points > user2_points)
+			System.out.println(user.getUsername() + ", you won the game! You scored " + (user1_points - user2_points));
+		else if (user1_points == user2_points)
+			System.out.println("Both players won the same number of games. Both players scored 0");
+		else
+			System.out.println(user2.getUsername() + ", you won the game! You scored " + (user2_points - user1_points));
+		
+		super.registerScore(user, user1_points - user2_points);
+		super.registerScore(user2, user1_points - user2_points);
 	}
 	
-	private void player(int player, int[][] grid, Scanner sc)
+	private void player(int player, int[][] grid, Scanner sc) throws InvalidInputException
 	{
 		System.out.println("ENTER The coordinate x(1-3) :");
-		int x = sc.nextInt();
+		int x = nextInt(1, 3, sc);
 		x = x - 1;
 		System.out.println("ENTER The coordinate y(1-3) :");
-		int y = sc.nextInt();
+		int y = nextInt(1, 3, sc);
 		y = y - 1;
-		while (grid[x][y] != 0)
-		{
-			System.out.println("\nTHE COORDINATES ENTERED BY YOU ARE INVALID!!! ENTER THE COORDINATES AGAIN !!!!");
-			System.out.println("ENTER The coordinate x(1-3) :");
-			x = sc.nextInt();
-			x = x - 1;
-			System.out.println("ENTER The coordinate y(1-3) :");
-			y = sc.nextInt();
-			y = y - 1;
-		}
+		if (grid[x][y] != 0)
+			throw new InvalidInputException("BLOCK ALREADY OCCUPIED! PLEASE ENTER COORDINATES OF AN UNOCCUPIED BLOCK!");
 		grid[x][y] = player;
 		displaygrid(grid);
-		if (checkwin(grid) == 0)
-		{
-			continueGame = true;
-		}
-		else if (checkwin(grid) == 1)
-		{
-			System.out.println("PLAYER ONE WINs");
-			continueGame = false;
-		}
-		else if (checkwin(grid) == -1)
-		{
-			System.out.println("PLAYER TWO WINs");
-			continueGame = false;
-		}
 	}
 	
 	public static void displaygrid(int[][] grid)
@@ -148,13 +202,13 @@ public class TicTacToe extends Game
 			else if (grid[0][i] + grid[1][i] + grid[2][i] == 3)
 				return 1;
 		}
-		if (grid[0][0] + grid[1][1] + grid[2][1] == 3)
+		if (grid[0][0] + grid[1][1] + grid[2][2] == 3)
 			return 1;
-		else if (grid[0][0] + grid[1][1] + grid[2][1] == -3)
+		else if (grid[0][0] + grid[1][1] + grid[2][2] == -3)
 			return -1;
-		else if (grid[0][2] + grid[1][1] + grid[2][2] == -3)
+		else if (grid[0][2] + grid[1][1] + grid[2][0] == -3)
 			return -1;
-		else if (grid[0][2] + grid[1][1] + grid[2][2] == 3)
+		else if (grid[0][2] + grid[1][1] + grid[2][0] == 3)
 			return 1;
 		
 		return 0;

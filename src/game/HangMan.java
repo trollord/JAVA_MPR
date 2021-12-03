@@ -20,7 +20,7 @@ public class HangMan extends Game
 	
 	public void start(Scanner sc)
 	{
-		System.out.println("***************__ WELCOME " + user.getUsername() + " TO HANG MAN!! __********************");
+		System.out.println("\n***************__ WELCOME " + user.getUsername() + " TO HANG MAN!! __********************");
 		int ch;
 		while (true)
 		{
@@ -30,9 +30,10 @@ public class HangMan extends Game
 			System.out.println("3 - Cars");
 			System.out.println("4 - Actors");
 			System.out.println("5 - TV series");
+			System.out.println("6 - Return to main menu");
 			try
 			{
-				ch = nextInt(1, 3, sc);
+				ch = nextInt(1, 6, sc);
 			}
 			catch (InvalidInputException e)
 			{
@@ -57,6 +58,8 @@ public class HangMan extends Game
 				break;
 			case 5:
 				tvseries(sc);
+				break;
+			case 6:
 				break;
 		}
 	}

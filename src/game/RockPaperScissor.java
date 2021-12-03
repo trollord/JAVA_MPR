@@ -25,7 +25,7 @@ public class RockPaperScissor extends Game
 	public void start(Scanner sc)
 	{
 		final int ROCK = 0, PAPER = 1, SCISSOR = 2;
-		System.out.println("***************__ WELCOME " + user.getUsername() + " TO ROCK,PAPER,SCISSORS!! __********************");
+		System.out.println("\n***************__ WELCOME " + user.getUsername() + " TO ROCK,PAPER,SCISSORS!! __********************");
 		int user_points = 0, opp_points = 0;
 		while (true)
 		{
