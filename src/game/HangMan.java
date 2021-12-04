@@ -3,6 +3,7 @@ package game;
 import static input.Input.nextChar;
 import static input.Input.nextInt;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -218,7 +219,7 @@ public class HangMan extends Game
 				System.out.println("  ____");
 				System.out.println(" |   _|_");
 				System.out.println(" |  |o o|");
-				System.out.println(" |  |_-_|   ");
+				System.out.println(" |  |\\_/|   ");
 				System.out.println(" |    |    ");
 				System.out.println(" |   /|\\   ");
 				System.out.println(" |  / | \\  ");
@@ -257,7 +258,7 @@ public class HangMan extends Game
 	}
 	public void actors(Scanner sc)
 	{
-		String[] list = {};
+		String[] list = {"brad pitt", "shah rukh khan", "matt damon", "salman khan", "hritik roshan", "hema malini", "kareena kapoor", "madhuri dixit"};
 		int r = rand.nextInt(list.length);
 		begin(list[r], list[r].length(), sc);
 	}
@@ -275,23 +276,30 @@ public class HangMan extends Game
 		int hint = rand.nextInt(l);
 		uncovered[hint] = true;
 		boolean wrong = true;
+		long start = System.currentTimeMillis();
 		outer: while (true)
 		{
 			wrong = true;
 			drawHangman(deaths);
-			System.out.println("Enter your guess");
+			System.out.println("Enter your guess (One letter only). Enter q to quit to main menu");
 			print_title(s, l, uncovered, hint);
 			System.out.println();
 			char g = ' ';
 			try
 			{
 				g = nextChar(sc);
+				if (!(g >= 'a' && g <= 'z' || g >= 'A' && g <= 'Z'))
+					throw new InvalidInputException();
 			}
 			catch (InvalidInputException e)
 			{
 				System.out.println(e.getMessage());
 				continue;
 			}
+			
+			if(g == 'Q' || g == 'q')
+				return;
+			
 			for (int i = 0; i < l; i++)
 			{
 				if (g == s.charAt(i) || g - 'A' + 'a' == s.charAt(i))
@@ -304,10 +312,11 @@ public class HangMan extends Game
 			{
 				deaths++;
 			}
-			System.out.println("\f");
 			if (deaths == 7)
 			{
 				System.out.println("Game over. You lost");
+				System.out.println("The word was " + s);
+				System.out.println("You didn't score any points");
 				drawHangman(7);
 				break;
 			}
@@ -316,9 +325,17 @@ public class HangMan extends Game
 				if (!uncovered[i])
 					continue outer;
 			}
-			System.out.println("You won!");
+			System.out.println("YOU WON!");
+			System.out.println("You guessed the word correctly! The word was " + s);
 			drawHangman(8);
-			System.exit(0);
+			
+			long time = System.currentTimeMillis() - start;
+			System.out.println("\nYou finished the game in " + time / 1000 + "s.");
+			System.out.println("You guessed wrong " + (deaths - 1) + " number of times.");
+			int score = (int) (300_000 / time / deaths); //300s = 5m
+			System.out.println("You scored " + score + " points");
+			super.registerScore(score);
+			break;
 		}
 	}
 	

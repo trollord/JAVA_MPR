@@ -21,8 +21,8 @@ public class TicTacToe extends Game
 		User user2 = new User();
 		do
 		{
-			System.out.println("This game can only be played by 2 players. Please find a friend to play this game with");
-			System.out.println("Enter 'guest' if you want to play as a guest. Enter 'return' to return to main menu");
+			System.out.println("This game can only be played by 2 players. Please find a friend to play this game with.");
+			System.out.println("Enter 'guest' if you want to play as a guest. Enter 'return' to return to main menu.");
 			System.out.print("Player 2, please enter your username : ");
 			String username = sc.nextLine();
 			if (username.equals("guest"))
@@ -107,12 +107,12 @@ public class TicTacToe extends Game
 		if (user1_points > user2_points)
 			System.out.println(user.getUsername() + ", you won the game! You scored " + (user1_points - user2_points));
 		else if (user1_points == user2_points)
-			System.out.println("Both players won the same number of games. Both players scored 0");
+			System.out.println("Both players won the same number of games. Both players scored 0 points");
 		else
 			System.out.println(user2.getUsername() + ", you won the game! You scored " + (user2_points - user1_points));
 		
 		super.registerScore(user, user1_points - user2_points);
-		super.registerScore(user2, user1_points - user2_points);
+		super.registerScore(user2, user2_points - user1_points);
 	}
 	
 	private void player(int player, int[][] grid, Scanner sc) throws InvalidInputException

@@ -32,7 +32,10 @@ public class Input
 	
 	public static char nextChar(Scanner sc) throws InvalidInputException
 	{
-		return sc.nextLine().charAt(0);
+		String str = sc.nextLine();
+		if(str.length() != 1)
+			throw new InvalidInputException("Please enter a single character");
+		return str.charAt(0);
 	}
 	
 	public static float nextFloat(Scanner sc) throws InvalidInputException

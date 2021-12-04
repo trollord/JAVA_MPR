@@ -1,5 +1,6 @@
 package game;
 
+import static input.Input.nextChar;
 import static input.Input.nextInt;
 
 import java.io.BufferedWriter;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Stack;
 
 import auth.User;
 import exceptions.InvalidInputException;
@@ -30,7 +32,7 @@ public class MazeGame extends Game
 		while (true)
 		{
 			System.out.println("\nChoose a difficulty");
-			System.out.println("1 - Easy (10x10 maze");
+			System.out.println("1 - Easy (10x10 maze)");
 			System.out.println("2 - Medium (20x20 maze)");
 			System.out.println("3 - Hard (30x30 maze)");
 			System.out.println("4 - Return to main menu");
@@ -50,13 +52,13 @@ public class MazeGame extends Game
 		switch (diff)
 		{
 			case 1:
-				maze = new Maze(10, 10);
+				maze = new Maze(11, 11);
 				break;
 			case 2:
-				maze = new Maze(20, 20);
+				maze = new Maze(21, 21);
 				break;
 			case 3:
-				maze = new Maze(30, 30);
+				maze = new Maze(31, 31);
 				break;
 			case 4:
 				return;
@@ -72,23 +74,48 @@ public class MazeGame extends Game
 			{
 				e.printStackTrace();
 			}
-			char c = sc.nextLine().toLowerCase().charAt(0);
+			char c;
+			while (true)
+			{
+				try
+				{
+					c = nextChar(sc);
+				}
+				catch (InvalidInputException e)
+				{
+					System.out.println(e.getMessage());
+					continue;
+				}
+				break;
+			}
 			switch (c)
 			{
 				case 'w':
+				case 'W':
 					maze.moveUp();
 					break;
+				case 'A':
 				case 'a':
 					maze.moveLeft();
 					break;
+				case 'S':
 				case 's':
 					maze.moveDown();
 					break;
+				case 'D':
 				case 'd':
 					maze.moveRight();
 					break;
+				case 'Z':
+				case 'z':
+					maze.undo();
+					break;
+				case 'Q':
+				case 'q':
+					return;
+				default:
+					System.out.println("Please enter a valid move");
 			}
-			
 			if (maze.gameWon())
 			{
 				try
@@ -105,8 +132,8 @@ public class MazeGame extends Game
 		}
 		
 		long time = System.currentTimeMillis() - startTime;
-		int score = (int) (300_000 / time); //300s = 5m
-		System.out.println("\nYou finished the game in " + time/1000 + "s.");
+		int score = (int) (300_000 / time) * diff * diff; //300s = 5m
+		System.out.println("\nYou finished the game in " + time / 1000 + "s.");
 		System.out.println("You scored " + score + " points");
 		super.registerScore(score);
 	}
@@ -116,6 +143,8 @@ class Maze
 {
 	private static final char TOP_RIGHT = '\u00BF', BOTTOM_LEFT = '\u00C0', BOTTOM_RIGHT = '\u00D9', TOP_LEFT = '\u00DA', VERTICAL = '\u00B3', HORIZONTAL = '\u00C4', BLOCK = '\u00DB', BLANK = ' ', UNDEFINED = (char) -1;
 	private static final char PLAYER_CHAR = 'O';
+	
+	private Stack<State> states;
 	
 	private final int width, height;
 	
@@ -131,6 +160,7 @@ class Maze
 	{
 		tiles = new char[width][height];
 		hooks = new boolean[width][height];
+		states = new Stack<State>();
 		bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		
 		this.width = width;
@@ -177,29 +207,35 @@ class Maze
 	
 	private void genMaze(int x1, int y1, int x2, int y2)
 	{
-		if (x2 - x1 <= 3 || y2 - y1 <= 3)
-			return;
-		
 		Random rand = new Random();
 		int mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+		
+		//Make sure that mx and my are on even indices, since walls only exist at even indices
+		if(mx % 2 != 0)
+			mx++;
+		if(my % 2 != 0)
+			my++;
+		
+		if(!(mx > x1 && mx < x2 && my > y1 && my < y2))
+			return;
 		
 		fillX(mx, y1 + 1, y2 - 1);
 		fillY(my, x1 + 1, x2 - 1);
 		
 		int rx1 = rand.nextInt(x2 - mx - 1) + mx + 1;
-		while (rx1 == (mx + x2) / 2 && x2 - mx != 2)
+		while (rx1 == (mx + x2) / 2 && x2 - mx != 2 || rx1 % 2 == 0)
 			rx1 = rand.nextInt(x2 - mx - 1) + mx + 1;
 		
 		int rx2 = rand.nextInt(mx - x1 - 1) + x1 + 1;
-		while (rx2 == (x1 + mx) / 2 && mx - x1 != 2)
+		while (rx2 == (x1 + mx) / 2 && mx - x1 != 2 || rx2 % 2 == 0)
 			rx2 = rand.nextInt(mx - x1 - 1) + x1 + 1;
 		
 		int ry1 = rand.nextInt(y2 - my - 1) + my + 1;
-		while (ry1 == (my + y2) / 2 && y2 - my != 2)
+		while (ry1 == (my + y2) / 2 && y2 - my != 2 || ry1 % 2 == 0)
 			ry1 = rand.nextInt(y2 - my - 1) + my + 1;
 		
 		int ry2 = rand.nextInt(my - y1 - 1) + y1 + 1;
-		while (ry2 == (y1 + my) / 2 && my - y1 != 2)
+		while (ry2 == (y1 + my) / 2 && my - y1 != 2 || ry2 %2 == 0)
 			ry2 = rand.nextInt(my - y1 - 1) + y1 + 1;
 		
 		int choice = rand.nextInt(4);
@@ -211,15 +247,6 @@ class Maze
 			tiles[mx][ry1] = BLANK;
 		if (choice != 3)
 			tiles[mx][ry2] = BLANK;
-		
-		/*try
-		{
-			display();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}*/
 		
 		genMaze(x1, y1, mx, my);
 		genMaze(mx, y1, x2, my);
@@ -244,6 +271,7 @@ class Maze
 	//If there is no hook, false is returned and xPos and yPos are left unchanged.
 	public boolean move(Direction dir)
 	{
+		states.push(new State(copy(tiles), xPos, yPos, this.dir));
 		int x = xPos, y = yPos;
 		do
 		{
@@ -262,10 +290,13 @@ class Maze
 					y++;
 					break;
 			}
-			if (isHook(x, y))
-				break;
-			else if (!isBlank(x, y))
+			if (!isBlank(x, y))
+			{
+				states.pop(); //If user didn't move, don't save this state as it will be a repeat
 				return false;
+			}
+			else if (isHook(x, y))
+				break;
 		}
 		while (true);
 		
@@ -278,12 +309,12 @@ class Maze
 		{
 			xPos += dx;
 			yPos += dy;
-			tiles[xPos][yPos] = tileForDirection(dir);
+			if (isBlank(xPos, yPos))
+				tiles[xPos][yPos] = tileForDirection(dir);
 		}
 		while (!isHook(xPos, yPos));
 		
 		this.dir = dir;
-		
 		return true;
 	}
 	
@@ -332,16 +363,34 @@ class Maze
 		move(Direction.DOWN);
 	}
 	
-	//Returns false if indices given are out of bounds
+	public void undo()
+	{
+		if (states.size() > 0)
+		{
+			State state = states.pop();
+			tiles = state.tiles;
+			xPos = state.xPos;
+			yPos = state.yPos;
+			dir = state.dir;
+		}
+	}
+	
+	//Returns false if indices given are out of bounds, or if tile is BLANK
 	public boolean isBlank(int xPos, int yPos)
 	{
 		return xPos >= 0 && xPos < tiles.length && yPos >= 0 && yPos < tiles[xPos].length && tiles[xPos][yPos] == BLANK;
 	}
 	
-	//Returns false if indices given are out of bounds
+	//Returns false if indices given are out of bounds, or if tile is a hook
 	public boolean isHook(int xPos, int yPos)
 	{
 		return xPos >= 0 && xPos < tiles.length && yPos >= 0 && yPos < tiles[xPos].length && hooks[xPos][yPos];
+	}
+	
+	//Returns true if indices given are out of bounds, or if tile is a BLOCK
+	private boolean isBlock(int xPos, int yPos)
+	{
+		return xPos < 0 || xPos >= tiles.length || yPos < 0 || yPos >= tiles[xPos].length || tiles[xPos][yPos] == BLOCK;
 	}
 	
 	public void display() throws IOException
@@ -356,6 +405,14 @@ class Maze
 					bw.write(tiles[x][y]);
 			}
 			
+			if(y == 2)
+				bw.write("    CONTROLS :");
+			else if(y == 3)
+				bw.write("    W - UP, A - LEFT, S - DOWN, D - RIGHT, Z - UNDO");
+			else if(y == 4)
+				bw.write("    ENTER 'Q' TO RETURN TO MAIN MENU");
+			if(y == height-2) //If we're on the second last line, print "END"
+				bw.write(" EXIT");
 			bw.write('\n');
 		}
 		
@@ -397,8 +454,38 @@ class Maze
 		return UNDEFINED;
 	}
 	
+	private void setTile(int x, int y, char c)
+	{
+		if (x >= 0 && y >= 0 && x < width && y < height)
+			tiles[x][y] = c;
+	}
+	
+	private char[][] copy(char[][] tiles)
+	{
+		char[][] result = new char[tiles.length][tiles[0].length];
+		for (int i = 0; i < tiles.length; i++)
+			for (int j = 0; j < tiles[i].length; j++)
+				result[i][j] = tiles[i][j];
+		return result;
+	}
+	
 	enum Direction
 	{
 		LEFT, RIGHT, UP, DOWN;
+	}
+	
+	class State
+	{
+		char[][] tiles;
+		int xPos, yPos;
+		Direction dir;
+		
+		public State(char[][] tiles, int xPos, int yPos, Direction dir)
+		{
+			this.tiles = tiles;
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.dir = dir;
+		}
 	}
 }

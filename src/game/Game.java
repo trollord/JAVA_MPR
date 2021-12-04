@@ -47,7 +47,7 @@ public abstract class Game
 	
 	protected void displayLeaderboard()
 	{
-		System.out.println("*********_THE LEADERBOARD_**********");
+		System.out.println("*********_THE " + GAME_NAME.toUpperCase() + " LEADERBOARD_**********");
 		System.out.println("NAME\t--" + "POINTS\t");
 		System.out.printf("_____________________________________\n");
 		try
