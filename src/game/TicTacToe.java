@@ -5,6 +5,7 @@ import static input.Input.nextInt;
 import java.util.Scanner;
 
 import auth.User;
+import exceptions.InvalidDetailsException;
 import exceptions.InvalidInputException;
 
 public class TicTacToe extends Game
@@ -37,7 +38,14 @@ public class TicTacToe extends Game
 			{
 				System.out.print("Player 2, please enter your password : ");
 				String pass = sc.nextLine();
-				user2.login(username, pass);
+				try
+				{
+					user2.login(username, pass);
+				}
+				catch (InvalidDetailsException e)
+				{
+					System.out.println(e.getMessage());
+				}
 			}
 		}
 		while (!user2.isLogged());

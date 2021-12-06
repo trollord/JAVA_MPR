@@ -60,7 +60,12 @@ public abstract class Game
 			{
 				String one = rs2.getString("p_name");
 				Integer two = rs2.getInt("p_score");
-				System.out.println(one + "\t\t" + two + "\t");
+				System.out.print(one + "\t");
+				if(one.length() < 16)
+					System.out.print("\t");
+				if(one.length() < 12)
+					System.out.print("\t");
+				System.out.println(two);
 			}
 		}
 		catch (Exception e)

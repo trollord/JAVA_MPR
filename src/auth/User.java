@@ -5,6 +5,7 @@ import static input.Input.nextLine;
 import java.util.Random;
 import java.util.Scanner;
 
+import exceptions.InvalidDetailsException;
 import exceptions.InvalidUsernameException;
 
 public class User
@@ -23,10 +24,17 @@ public class User
 		String username = nextLine(sc);
 		System.out.print("Enter your password : ");
 		String pass = nextLine(sc);
-		login(username, pass);
+		try
+		{
+			login(username, pass);
+		}
+		catch (InvalidDetailsException e)
+		{
+			System.out.println(e.getMessage());
+		}
 	}
 	
-	public void login(String username, String pass)
+	public void login(String username, String pass) throws InvalidDetailsException
 	{
 		Authenticator auth = new Authenticator();
 		
@@ -37,7 +45,7 @@ public class User
 			System.out.println("Successfully logged into " + username);
 		}
 		else
-			System.out.println("Invalid username/password");
+			throw new InvalidDetailsException("Invalid username/password");
 	}
 	
 	public void register(Scanner sc)
@@ -55,7 +63,7 @@ public class User
 			{
 				auth.checkValidity(username);
 			}
-			catch(InvalidUsernameException e)
+			catch (InvalidUsernameException e)
 			{
 				System.out.println(e.getMessage());
 				System.out.println("Enter q to return to main menu");

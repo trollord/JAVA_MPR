@@ -38,7 +38,7 @@ public class Authenticator
 	
 	public void checkValidity(String u_name) throws InvalidUsernameException
 	{
-		if (u_name == "q" || u_name == "guest" || u_name == "return")
+		if (u_name.equals("q") || u_name.equals("guest") || u_name.equals("return"))
 			throw new InvalidUsernameException("Please select another username. This username is reserved");
 		try
 		{
