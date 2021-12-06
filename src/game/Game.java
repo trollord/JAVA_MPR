@@ -48,7 +48,7 @@ public abstract class Game
 	protected void displayLeaderboard()
 	{
 		System.out.println("*********_THE " + GAME_NAME.toUpperCase() + " LEADERBOARD_**********");
-		System.out.println("NAME\t--" + "POINTS\t");
+		System.out.println("NAME\t\t" + "POINTS\t");
 		System.out.printf("_____________________________________\n");
 		try
 		{
@@ -60,7 +60,7 @@ public abstract class Game
 			{
 				String one = rs2.getString("p_name");
 				Integer two = rs2.getInt("p_score");
-				System.out.println(one + "\t--" + two + "\t");
+				System.out.println(one + "\t\t" + two + "\t");
 			}
 		}
 		catch (Exception e)
