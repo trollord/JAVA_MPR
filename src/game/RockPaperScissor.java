@@ -41,7 +41,7 @@ public class RockPaperScissor extends Game
 				continue;
 			}
 			
-			if(move == 4)
+			if (move == 4)
 				break;
 			
 			move -= 1; //0 index user's move
@@ -56,7 +56,7 @@ public class RockPaperScissor extends Game
 				user_points++;
 				opp_points++;
 			}
-			if (move == ROCK && rand == SCISSOR || move == SCISSOR && rand == PAPER || move == PAPER && rand == ROCK)
+			else if (move == ROCK && rand == SCISSOR || move == SCISSOR && rand == PAPER || move == PAPER && rand == ROCK)
 			{
 				System.out.println("You won!! wohoo");
 				user_points++;
@@ -68,13 +68,15 @@ public class RockPaperScissor extends Game
 			}
 		}
 		
+		System.out.println("You won " + user_points + " number of games");
+		System.out.println("CPU won " + opp_points + " number of games");
 		if (user_points > opp_points)
-			System.out.println("You won the game! your points are: " + user_points);
+			System.out.println("YOU WON AGAINST THE CPU!!");
 		else if (user_points == opp_points)
-			System.out.println("Its a draw! your points are: " + user_points);
+			System.out.println("THE GAME WAS A TIE.");
 		else
-			System.out.println("Opponent won the game by a margin of: " + (opp_points - user_points));
-		
+			System.out.println("THE CPU WON. BETTER LUCK NEXT TIME!");
+		System.out.println("You scored " + (user_points - opp_points) + " points");
 		super.registerScore(user_points - opp_points);
 	}
 	

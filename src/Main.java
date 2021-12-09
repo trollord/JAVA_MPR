@@ -29,7 +29,7 @@ public class Main
 				System.out.println("3 - Maze Game");
 				System.out.println("4 - Hang man");
 				System.out.println("5 - Leaderboards");
-				System.out.println(exitCode + " - Quit");
+				System.out.println(exitCode + " - Logout");
 				
 				try
 				{
@@ -76,8 +76,9 @@ public class Main
 		Scanner sc = new Scanner(System.in);
 		User user = new User();
 		
-		while (true)
+		loop: while (true)
 		{
+			System.out.println("\n***************__ WELCOME TO THE GAMING LOUNGE!! __********************");
 			int ch;
 			while (true)
 			{
@@ -85,10 +86,11 @@ public class Main
 				System.out.println("1 - Login");
 				System.out.println("2 - Register");
 				System.out.println("3 - Play as guest");
+				System.out.println("4 - Exit");
 				
 				try
 				{
-					ch = nextInt(1, 3, sc);
+					ch = nextInt(1, 4, sc);
 				}
 				catch (InvalidInputException e)
 				{
@@ -103,6 +105,7 @@ public class Main
 				case 1:
 					user.login(sc);
 					break;
+				
 				case 2:
 					user.register(sc);
 					break;
@@ -110,13 +113,13 @@ public class Main
 				case 3:
 					user.setUpGuest();
 					break;
+				
+				case 4:
+					break loop;
 			}
 			if (user.isLogged())
-				break;
+				init(sc, user);
 		}
-		
-		init(sc, user);
-		
 		sc.close();
 	}
 }
